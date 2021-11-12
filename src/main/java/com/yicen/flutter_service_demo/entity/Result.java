@@ -21,4 +21,14 @@ public class Result<T> {
         result.setData(null);
         return  result;
     }
+
+    public static  Result ok(Object data){
+        Result result = new Result();
+        result.setCode(200);
+        result.setSuccess(true);
+        result.setMessage("请求成功");
+        result.setData(data);
+        System.out.println("result ok -->>>>>" + result);
+        return  result;
+    }
 }
