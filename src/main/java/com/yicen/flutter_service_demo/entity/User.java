@@ -1,6 +1,10 @@
 package com.yicen.flutter_service_demo.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import javax.annotation.Resource;
@@ -9,21 +13,25 @@ import java.util.Date;
 
 @Data
 @Resource
+@TableName("user")
 public class User implements Serializable {
 
-    private  String username;
+    private String username;
 
-    private  String password;
+    private String password;
 
-    private  String id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
-    private  String createdDate;
-
+    @TableField("create_date")
     private Date createTime;
 
-    private  Date updateTime;
+    @TableField("update_date")
+    private Date updateTime;
 
     private String email;
 
     private String male;
+
+    private String address;
 }

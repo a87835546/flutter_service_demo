@@ -10,4 +10,6 @@
     <select id="selectAll" resultType="com.yicen.flutter_service_demo.entity.User">
         select * from tb_user;
     </select>
+
+
 </mapper>

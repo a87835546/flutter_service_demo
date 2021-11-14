@@ -3,7 +3,10 @@ package com.yicen.flutter_service_demo.controller;
 import com.yicen.flutter_service_demo.entity.Result;
 import com.yicen.flutter_service_demo.entity.User;
 import com.yicen.flutter_service_demo.entity.UserDo;
+import com.yicen.flutter_service_demo.imp.UserServiceImpl;
 import com.yicen.flutter_service_demo.mapper.UserMapper;
+import io.swagger.annotations.Api;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +19,16 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user/")
+@Api("用户管理")
 public class UserController {
 
     @Resource
-    private UserMapper userMapper;
+    private UserServiceImpl userService;
 
     @GetMapping("test")
-    List<User> test() {
-        return userMapper.test();
+    Result<User> test() {
+        return Result.ok(userService.test());
+
     }
 
     @GetMapping("test1")
@@ -60,7 +65,20 @@ public class UserController {
 
     @GetMapping("test5")
     Result<List<User>> test5(){
-        List<User> users = userMapper.selectAll();
+        List<User> users = userService.queryAll();
         return Result.ok(users);
+    }
+
+    @PostMapping("register")
+    Result<User> createNewUser(@RequestBody UserDo userDo){
+        User user = new User();
+        BeanUtils.copyProperties(userDo,user);
+        return Result.ok(userService.add(user));
+    }
+
+    @PostMapping("query")
+    Result<User> queryUSerById(){
+        User user = userService.test();
+        return Result.ok(user);
     }
 }
