@@ -1,5 +1,6 @@
 package com.yicen.flutter_service_demo.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -8,11 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
+@Slf4j
 public class HeaderInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("request---->>>content type :" + request.getContentType());
-        System.out.println("response :" + response);
+        log.info("request---->>>content type :" + request.getContentType() +"\n" + "request.url----->>>>:" + request.getRequestURL());
+        log.info("response :" + response);
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 

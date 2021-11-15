@@ -6,6 +6,7 @@ import com.yicen.flutter_service_demo.entity.UserDo;
 import com.yicen.flutter_service_demo.imp.UserServiceImpl;
 import com.yicen.flutter_service_demo.mapper.UserMapper;
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user/")
 @Api("用户管理")
+@Slf4j
 public class UserController {
 
     @Resource
@@ -41,6 +43,7 @@ public class UserController {
     @GetMapping("test2")
     void test2() {
         System.out.println("test2 request");
+        log.info("test2 request");
     }
 
     @GetMapping("test3")
@@ -49,8 +52,8 @@ public class UserController {
                  HttpServletRequest request,
                  HttpServletResponse response
     ) {
-        System.out.printf("username:" + username + "\n password:" + password);
-        System.out.printf("requst :" + request + "response:" + response);
+        log.info("username:" + username + "\n password:" + password);
+        log.info("requst :" + request + "response:" + response);
 
         return Result.ok();
     }
@@ -59,7 +62,7 @@ public class UserController {
     Result test4(@RequestBody UserDo userDo, HttpServletRequest request) {
         Result result = new Result<UserDo>();
         result.setData(userDo);
-        System.out.println("requst :" + request);
+        log.info("requst :" + request);
         return Result.ok(userDo);
     }
 
@@ -79,6 +82,8 @@ public class UserController {
     @PostMapping("query")
     Result<User> queryUSerById(){
         User user = userService.test();
+        log.info(String.valueOf(user));
         return Result.ok(user);
     }
+
 }

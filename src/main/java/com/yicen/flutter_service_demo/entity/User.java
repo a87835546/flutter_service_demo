@@ -34,4 +34,6 @@ public class User implements Serializable {
     private String male;
 
     private String address;
+
+
 }
