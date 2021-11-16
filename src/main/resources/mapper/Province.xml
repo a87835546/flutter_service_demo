@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yicen.flutter_service_demo.mapper.ProvinceMapper">
+    <select id="selectAll" resultType="com.yicen.flutter_service_demo.entity.Province">
+<!--        select  p.id,p.name,c.name,c.id-->
+<!--        from bs_province p,bs_city c where p.id == c.provinceCode;-->
+    </select>
+
+</mapper>
