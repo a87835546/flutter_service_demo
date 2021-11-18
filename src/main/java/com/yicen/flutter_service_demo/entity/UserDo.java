@@ -1,7 +1,6 @@
 package com.yicen.flutter_service_demo.entity;
 
 import lombok.Data;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.Serializable;

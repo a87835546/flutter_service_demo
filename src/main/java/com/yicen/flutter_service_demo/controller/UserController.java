@@ -4,11 +4,9 @@ import com.yicen.flutter_service_demo.entity.Result;
 import com.yicen.flutter_service_demo.entity.User;
 import com.yicen.flutter_service_demo.entity.UserDo;
 import com.yicen.flutter_service_demo.imp.UserServiceImpl;
-import com.yicen.flutter_service_demo.mapper.UserMapper;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
