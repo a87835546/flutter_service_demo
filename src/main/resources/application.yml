@@ -14,3 +14,10 @@ mybatis-plus:
 logging:
   file:
     name: /Desktop/logs/flutter-demo.log
+
+
+flutter:
+  jwt:
+    secret: abc123456
+    expire: 5
+    cache-expire: 10

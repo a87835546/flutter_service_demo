@@ -16,6 +16,7 @@ import java.util.Date;
 @TableName("user")
 public class User implements Serializable {
 
+
     private String username;
 
     private String password;

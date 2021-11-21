@@ -68,6 +68,27 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
+<!--        http 的状态-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcomponents-client</artifactId>
+            <version>4.5.13</version>
+        </dependency>
+        <dependency>
+            <groupId>de.yourinspiration</groupId>
+            <artifactId>spring-jwt</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lingdonge</groupId>
+            <artifactId>spring-shiro</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+            <version>1.7.1</version>
+        </dependency>
 <!--        swagger3 的依赖   -->
 <!--        <dependency>-->
 <!--            <groupId>io.springfox</groupId>-->
