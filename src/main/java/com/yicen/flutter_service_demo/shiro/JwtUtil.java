@@ -1,7 +1,6 @@
 package com.yicen.flutter_service_demo.shiro;
 
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateUtil;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,7 @@ public class JwtUtil {
     private Integer expire;
 
     public String createToken(String userId){
-        Date date = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR,5);
+//        Date date = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR,5);
         return "";
     }
 }

@@ -1,9 +1,11 @@
 package com.yicen.flutter_service_demo.controller;
 
 import com.yicen.flutter_service_demo.entity.Result;
+import com.yicen.flutter_service_demo.entity.TbUser;
 import com.yicen.flutter_service_demo.entity.User;
 import com.yicen.flutter_service_demo.entity.UserDo;
-import com.yicen.flutter_service_demo.imp.UserServiceImpl;
+import com.yicen.flutter_service_demo.entity.vo.TbRegisterUserVo;
+import com.yicen.flutter_service_demo.services.impl.UserServiceImpl;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +54,7 @@ public class UserController {
                  HttpServletResponse response
     ) {
         log.info("username:" + username + "\n password:" + password);
-        log.info("requst :" + request + "response:" + response);
+        log.info("request :" + request + "response:" + response);
 
         return Result.ok();
     }
@@ -71,7 +74,8 @@ public class UserController {
     }
 
     @PostMapping("register")
-    Result<User> createNewUser(@RequestBody UserDo userDo){
+    Result<User> createNewUser(@NotNull @RequestBody UserDo userDo){
+        log.info(userDo.toString());
         User user = new User();
         BeanUtils.copyProperties(userDo,user);
         return Result.ok(userService.add(user));
@@ -84,4 +88,9 @@ public class UserController {
         return Result.ok(user);
     }
 
+    @PostMapping("tb/register")
+    Result<TbUser> registerUser(@RequestBody TbRegisterUserVo vo){
+        TbUser user = userService.registerUser(vo);
+        return Result.ok(user);
+    }
 }
