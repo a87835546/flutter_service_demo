@@ -1,5 +1,6 @@
 package com.yicen.flutter_service_demo.controller;
 
+import com.yicen.flutter_service_demo.controller.user.UserController;
 import com.yicen.flutter_service_demo.entity.UserDo;
 import org.junit.Test;
 import org.junit.runner.RunWith;

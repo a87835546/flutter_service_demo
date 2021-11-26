@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class UserServiceImpl implements UserService, UserDaoService {
+public class UserServiceImpl implements UserService,UserDaoService {
 
     @Autowired
     private UserMapper userMapper;

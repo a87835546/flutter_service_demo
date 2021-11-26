@@ -1,4 +1,4 @@
-package com.yicen.flutter_service_demo.controller;
+package com.yicen.flutter_service_demo.controller.user;
 
 import com.yicen.flutter_service_demo.entity.Result;
 import com.yicen.flutter_service_demo.entity.TbUser;
@@ -74,7 +74,7 @@ public class UserController {
     }
 
     @PostMapping("register")
-    Result<User> createNewUser(@NotNull @RequestBody UserDo userDo){
+    public Result<User> createNewUser(@NotNull @RequestBody UserDo userDo){
         log.info(userDo.toString());
         User user = new User();
         BeanUtils.copyProperties(userDo,user);
@@ -82,7 +82,7 @@ public class UserController {
     }
 
     @PostMapping("query")
-    Result<User> queryUSerById(){
+    public Result<User> queryUSerById(){
         User user = userService.test();
         log.info(String.valueOf(user));
         return Result.ok(user);

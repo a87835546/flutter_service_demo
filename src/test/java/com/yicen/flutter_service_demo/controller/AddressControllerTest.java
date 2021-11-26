@@ -1,5 +1,6 @@
 package com.yicen.flutter_service_demo.controller;
 
+import com.yicen.flutter_service_demo.controller.vip.AddressController;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

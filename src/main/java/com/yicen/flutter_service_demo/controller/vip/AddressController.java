@@ -1,4 +1,4 @@
-package com.yicen.flutter_service_demo.controller;
+package com.yicen.flutter_service_demo.controller.vip;
 
 import com.yicen.flutter_service_demo.entity.City;
 import com.yicen.flutter_service_demo.entity.Result;
