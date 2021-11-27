@@ -15,6 +15,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
 import java.util.List;
 
 @RestController()
@@ -76,5 +78,11 @@ public class ActiveController {
 
         redisTemplate.opsForValue().set("name","zhangsan");
         log.info("result :" + redisTemplate.opsForValue().get("name"));
+    }
+
+    @GetMapping("test")
+    @ApiOperation("测试方法。。。。。。")
+    public Result test3(){
+        return Result.ok(new Date().toString());
     }
 }

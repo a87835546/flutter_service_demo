@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
 
 import javax.annotation.Resource;
@@ -15,7 +17,6 @@ import java.util.Date;
 @Resource
 @TableName("user")
 public class User implements Serializable {
-
 
     private String username;
 
@@ -32,9 +33,17 @@ public class User implements Serializable {
 
     private String email;
 
-    private String male;
+    private Bool gender;
 
     private String address;
+
+    private String balance;
+
+    private String nickName;
+
+    private String mobile;
+
+    private Date birthday;
 
 
 }

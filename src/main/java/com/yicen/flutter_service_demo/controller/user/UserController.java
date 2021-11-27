@@ -1,11 +1,13 @@
 package com.yicen.flutter_service_demo.controller.user;
 
+import com.yicen.flutter_service_demo.controller.user.entity.LoginByMobilePo;
 import com.yicen.flutter_service_demo.entity.Result;
 import com.yicen.flutter_service_demo.entity.TbUser;
 import com.yicen.flutter_service_demo.entity.User;
 import com.yicen.flutter_service_demo.entity.UserDo;
 import com.yicen.flutter_service_demo.entity.vo.TbRegisterUserVo;
 import com.yicen.flutter_service_demo.services.impl.UserServiceImpl;
+import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -76,9 +78,44 @@ public class UserController {
     @PostMapping("register")
     public Result<User> createNewUser(@NotNull @RequestBody UserDo userDo){
         log.info(userDo.toString());
-        User user = new User();
-        BeanUtils.copyProperties(userDo,user);
-        return Result.ok(userService.add(user));
+        User user = userService.queryByUsername(userDo.getUsername());
+        if (user == null){
+            user = new User();
+            BeanUtils.copyProperties(userDo,user);
+            User add = userService.add(user);
+            return Result.ok(add);
+        }else{
+            return Result.error("此用户已经注册过");
+        }
+    }
+
+    @PostMapping("login")
+    public Result<User> queryUserByName(@NotNull @RequestBody UserDo userDo){
+        User user = userService.queryByUsername(userDo.getUsername());
+        if (user == null){
+            User user1 = userService.queryByUsername(userDo.getUsername());
+            if (user1 == null || !user1.getPassword().equals(userDo.getPassword()))
+            {
+                return Result.error(201,"用户名或者密码错误");
+            }else {
+                return Result.ok(user1);
+            }
+        }else{
+            return Result.error("此用户已经注册过");
+        }
+    }
+
+    @PostMapping("loginByPhone")
+    public Result<User> loginByPhone(@RequestBody LoginByMobilePo po){
+        log.info("user mobile login" + po);
+        User user = userService.queryByPhone(po.getMobile());
+        if (user != null){
+            // TODO: 2021/11/28
+            /// 判断验证码 是否正确。。。。
+            return Result.ok(user);
+        }else{
+            return Result.error(202,"此用户没有注册过");
+        }
     }
 
     @PostMapping("query")

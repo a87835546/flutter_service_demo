@@ -1,5 +1,8 @@
 package com.yicen.flutter_service_demo.services.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.yicen.flutter_service_demo.entity.TbUser;
 import com.yicen.flutter_service_demo.entity.User;
 import com.yicen.flutter_service_demo.entity.vo.TbRegisterUserVo;
@@ -83,5 +86,26 @@ public class UserServiceImpl implements UserService,UserDaoService {
             log.info(userDao.selectByPrimaryKey(id).toString());
             return userDao.selectByPrimaryKey(id);
         }
+    }
+
+    @Override
+    public User queryByUsername(String username) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username",username);
+        List<User> users = userMapper.selectList(wrapper);
+        return users.size()>0?users.get(0):null;
+    }
+
+    @Override
+    public User queryByPhone(String mobile) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("mobile",mobile);
+        List<User> users = userMapper.selectList(wrapper);
+        return users.size()>0?users.get(0):null;
+    }
+
+    @Override
+    public User queryById(Integer id) {
+        return userMapper.selectById(id);
     }
 }

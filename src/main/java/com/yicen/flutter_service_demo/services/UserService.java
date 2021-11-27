@@ -11,4 +11,7 @@ public interface UserService {
     public List<User> queryAll();
     public User test();
     public User add(User user);
+    public User queryByUsername(String username);
+    public User queryById(Integer id);
+    public User queryByPhone(String mobile);
 }

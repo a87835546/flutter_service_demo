@@ -21,7 +21,6 @@ public class UserDo implements Serializable {
     @ApiModelProperty("注册的密码")
     private  String password;
 
-    @NotBlank
     @ApiModelProperty("用户的email")
     private String email;
 
