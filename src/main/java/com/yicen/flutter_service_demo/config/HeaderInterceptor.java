@@ -2,6 +2,7 @@ package com.yicen.flutter_service_demo.config;
 
 import com.yicen.flutter_service_demo.exception.DemoException;
 import com.yicen.flutter_service_demo.utils.JwtUtil;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class HeaderInterceptor implements HandlerInterceptor {
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws DemoException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
         log.info("request---->>>content type :" + request.getContentType() +"\n" + "request.url----->>>>:" + request.getRequestURL());
         log.info("response :" + response);
         HandlerMethod method = (HandlerMethod) handler;
@@ -25,7 +26,7 @@ public class HeaderInterceptor implements HandlerInterceptor {
         }else {
             String token = request.getHeader("token");
             log.info("token ---- >>>>>> " + token);
-            if (token.isEmpty()){
+            if (StringUtil.isNullOrEmpty(token)){
                 throw new DemoException("无token，请登录");
             }else {
 
