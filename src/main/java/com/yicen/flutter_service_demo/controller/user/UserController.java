@@ -1,5 +1,8 @@
 package com.yicen.flutter_service_demo.controller.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yicen.flutter_service_demo.config.NoNeedLogin;
 import com.yicen.flutter_service_demo.controller.user.entity.LoginByMobilePo;
 import com.yicen.flutter_service_demo.entity.Result;
 import com.yicen.flutter_service_demo.entity.TbUser;
@@ -7,10 +10,15 @@ import com.yicen.flutter_service_demo.entity.User;
 import com.yicen.flutter_service_demo.entity.UserDo;
 import com.yicen.flutter_service_demo.entity.vo.TbRegisterUserVo;
 import com.yicen.flutter_service_demo.services.impl.UserServiceImpl;
+import com.yicen.flutter_service_demo.utils.JwtUtil;
+import com.yicen.flutter_service_demo.utils.RedisUtil;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,13 +38,17 @@ public class UserController {
     @Resource
     private UserServiceImpl userService;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     @GetMapping("test")
+    @NoNeedLogin
     Result<User> test() {
         return Result.ok(userService.test());
-
     }
 
     @GetMapping("test1")
+    @NoNeedLogin
     Map<String, String> test1() {
         HashMap<String, String> map = new HashMap<>();
         map.put("test1", "12323");
@@ -44,6 +56,7 @@ public class UserController {
     }
 
     @GetMapping("test2")
+    @NoNeedLogin
     void test2() {
         System.out.println("test2 request");
         log.info("test2 request");
@@ -76,12 +89,34 @@ public class UserController {
     }
 
     @PostMapping("register")
-    public Result<User> createNewUser(@NotNull @RequestBody UserDo userDo){
+    @NoNeedLogin
+    @ApiOperation("注册用户，使用用户名密码")
+    public Result<Map> createNewUser(@NotNull @RequestBody UserDo userDo) throws JsonProcessingException {
         log.info(userDo.toString());
         User user = userService.queryByUsername(userDo.getUsername());
         if (user == null){
             user = new User();
             BeanUtils.copyProperties(userDo,user);
+            User add = userService.add(user);
+            String token = JwtUtil.getToken(add.getUsername());
+            JSONObject jsonObject = JSONObject.fromObject(add);
+            jsonObject.put("token",token);
+            redisUtil.set(add.getUsername(),token);
+            return Result.ok(jsonObject);
+        }else{
+            return Result.error("此用户已经注册过");
+        }
+    }
+
+    @PostMapping("registerByPhone")
+    @NoNeedLogin
+    @ApiOperation("注册用户，使用用户名密码")
+    public Result<User> registerByPhone(@NotNull @RequestBody LoginByMobilePo po){
+        log.info(po.toString());
+        User user = userService.queryByUsername(po.getMobile());
+        if (user == null){
+            user = new User();
+            BeanUtils.copyProperties(po,user);
             User add = userService.add(user);
             return Result.ok(add);
         }else{
@@ -90,22 +125,29 @@ public class UserController {
     }
 
     @PostMapping("login")
+    @NoNeedLogin
+    @ApiOperation("登录用户，使用用户名密码")
     public Result<User> queryUserByName(@NotNull @RequestBody UserDo userDo){
         User user = userService.queryByUsername(userDo.getUsername());
-        if (user == null){
-            User user1 = userService.queryByUsername(userDo.getUsername());
-            if (user1 == null || !user1.getPassword().equals(userDo.getPassword()))
+        if (user != null){
+            if (!user.getPassword().equals(userDo.getPassword()))
             {
                 return Result.error(201,"用户名或者密码错误");
             }else {
-                return Result.ok(user1);
+                String token = JwtUtil.getToken(user.getUsername());
+                redisUtil.set(user.getUsername(),token);
+                JSONObject jsonObject = JSONObject.fromObject(user);
+                jsonObject.put("token",token);
+                return Result.ok(jsonObject);
             }
         }else{
-            return Result.error("此用户已经注册过");
+            return Result.ok("用户没有注册，请先注册");
         }
     }
 
     @PostMapping("loginByPhone")
+    @NoNeedLogin
+    @ApiOperation("登录用户，使用手机号和验证码")
     public Result<User> loginByPhone(@RequestBody LoginByMobilePo po){
         log.info("user mobile login" + po);
         User user = userService.queryByPhone(po.getMobile());
@@ -126,6 +168,7 @@ public class UserController {
     }
 
     @PostMapping("tb/register")
+    @NoNeedLogin
     Result<TbUser> registerUser(@RequestBody TbRegisterUserVo vo){
         TbUser user = userService.registerUser(vo);
         return Result.ok(user);

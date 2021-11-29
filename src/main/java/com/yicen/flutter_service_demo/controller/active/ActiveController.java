@@ -1,6 +1,7 @@
 package com.yicen.flutter_service_demo.controller.active;
 
 
+import com.yicen.flutter_service_demo.config.NoNeedLogin;
 import com.yicen.flutter_service_demo.controller.active.entity.Active;
 import com.yicen.flutter_service_demo.controller.active.serivce.impl.ActiveServiceImpl.ActiveServiceImpl;
 import com.yicen.flutter_service_demo.entity.Result;
@@ -20,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController()
-@RequestMapping("/active/")
+@RequestMapping("/activity/")
 @Slf4j
 @Api("活动数据对应的接口")
 public class ActiveController {
@@ -50,6 +51,7 @@ public class ActiveController {
 
     @GetMapping("banner")
     @ApiOperation("获取首页的banner数据")
+    @NoNeedLogin
     public Result<List> getBannerList(){
         String banner = null;
         List<Active> actives = null;
@@ -84,5 +86,15 @@ public class ActiveController {
     @ApiOperation("测试方法。。。。。。")
     public Result test3(){
         return Result.ok(new Date().toString());
+    }
+
+    @GetMapping("signInfo")
+    public Result getAccountSignInfo(){
+        return Result.ok();
+    }
+
+    @GetMapping("vipInfo")
+    public Result getVipInfo(){
+        return Result.ok();
     }
 }

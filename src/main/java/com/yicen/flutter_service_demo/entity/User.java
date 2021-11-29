@@ -8,10 +8,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Resource
@@ -26,24 +30,25 @@ public class User implements Serializable {
     private Integer id;
 
     @TableField("create_date")
-    private Date createTime;
+    private String createTime;
 
     @TableField("update_date")
-    private Date updateTime;
+    private String updateTime;
 
     private String email;
 
-    private Bool gender;
+    private Boolean gender;
 
     private String address;
 
     private String balance;
 
+    @TableField("nick_name")
     private String nickName;
 
     private String mobile;
 
-    private Date birthday;
+    private String birthday;
 
 
 }

@@ -69,15 +69,10 @@
         </dependency>
 
         <dependency>
-            <groupId>de.yourinspiration</groupId>
-            <artifactId>spring-jwt</artifactId>
-            <version>0.1.0</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.lingdonge</groupId>-->
-<!--            <artifactId>spring-shiro</artifactId>-->
-<!--            <version>3.0.3</version>-->
-<!--        </dependency>-->
+
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
@@ -94,24 +89,7 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
             <version>2.6.0</version>
         </dependency>
-        <!--        swagger3 的依赖   -->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-boot-starter</artifactId>-->
-<!--            <version>3.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-swagger2</artifactId>-->
-<!--            <version>3.0.0</version>-->
-<!--        </dependency>-->
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-swagger-ui</artifactId>-->
-<!--            <version>3.0.0</version>-->
-<!--        </dependency>-->
-        <!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
+
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
@@ -148,6 +126,13 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.18.2</version>
+        </dependency>
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
