@@ -1,5 +1,6 @@
 package com.yicen.flutter_service_demo.controller.payment;
 
+import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.controller.payment.service.impl.PaymentServiceImpl;
 import com.yicen.flutter_service_demo.entity.Result;
 import io.swagger.annotations.Api;
@@ -23,6 +24,7 @@ public class PaymentController {
 
 
     @GetMapping("checkBalance")
+    @NeedLogin
     public Result checkBalance(){
         Map<String ,String> map = new HashMap();
         map.put("balance","100");

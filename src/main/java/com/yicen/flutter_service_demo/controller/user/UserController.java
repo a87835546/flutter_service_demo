@@ -2,7 +2,7 @@ package com.yicen.flutter_service_demo.controller.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yicen.flutter_service_demo.config.NoNeedLogin;
+import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.controller.user.entity.LoginByMobilePo;
 import com.yicen.flutter_service_demo.entity.Result;
 import com.yicen.flutter_service_demo.entity.TbUser;
@@ -42,13 +42,11 @@ public class UserController {
     private RedisUtil redisUtil;
 
     @GetMapping("test")
-    @NoNeedLogin
     Result<User> test() {
         return Result.ok(userService.test());
     }
 
     @GetMapping("test1")
-    @NoNeedLogin
     Map<String, String> test1() {
         HashMap<String, String> map = new HashMap<>();
         map.put("test1", "12323");
@@ -56,7 +54,6 @@ public class UserController {
     }
 
     @GetMapping("test2")
-    @NoNeedLogin
     void test2() {
         System.out.println("test2 request");
         log.info("test2 request");
@@ -89,7 +86,6 @@ public class UserController {
     }
 
     @PostMapping("register")
-    @NoNeedLogin
     @ApiOperation("注册用户，使用用户名密码")
     public Result<Map> createNewUser(@NotNull @RequestBody UserDo userDo) throws JsonProcessingException {
         log.info(userDo.toString());
@@ -109,7 +105,6 @@ public class UserController {
     }
 
     @PostMapping("registerByPhone")
-    @NoNeedLogin
     @ApiOperation("注册用户，使用用户名密码")
     public Result<User> registerByPhone(@NotNull @RequestBody LoginByMobilePo po){
         log.info(po.toString());
@@ -125,7 +120,6 @@ public class UserController {
     }
 
     @PostMapping("login")
-    @NoNeedLogin
     @ApiOperation("登录用户，使用用户名密码")
     public Result<User> queryUserByName(@NotNull @RequestBody UserDo userDo){
         User user = userService.queryByUsername(userDo.getUsername());
@@ -146,7 +140,6 @@ public class UserController {
     }
 
     @PostMapping("loginByPhone")
-    @NoNeedLogin
     @ApiOperation("登录用户，使用手机号和验证码")
     public Result<User> loginByPhone(@RequestBody LoginByMobilePo po){
         log.info("user mobile login" + po);
@@ -161,6 +154,7 @@ public class UserController {
     }
 
     @PostMapping("query")
+    @NeedLogin
     public Result<User> queryUSerById(){
         User user = userService.test();
         log.info(String.valueOf(user));
@@ -168,7 +162,6 @@ public class UserController {
     }
 
     @PostMapping("tb/register")
-    @NoNeedLogin
     Result<TbUser> registerUser(@RequestBody TbRegisterUserVo vo){
         TbUser user = userService.registerUser(vo);
         return Result.ok(user);

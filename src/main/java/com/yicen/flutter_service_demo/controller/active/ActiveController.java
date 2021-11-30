@@ -1,7 +1,7 @@
 package com.yicen.flutter_service_demo.controller.active;
 
 
-import com.yicen.flutter_service_demo.config.NoNeedLogin;
+import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.controller.active.entity.Active;
 import com.yicen.flutter_service_demo.controller.active.serivce.impl.ActiveServiceImpl.ActiveServiceImpl;
 import com.yicen.flutter_service_demo.entity.Result;
@@ -38,6 +38,7 @@ public class ActiveController {
     private RedisUtil redisUtil;
 
     @GetMapping("queryAll")
+    @NeedLogin
     public Result<List<Active>> getActiveList() {
         List<Active> actives = null;
         try {
@@ -51,7 +52,6 @@ public class ActiveController {
 
     @GetMapping("banner")
     @ApiOperation("获取首页的banner数据")
-    @NoNeedLogin
     public Result<List> getBannerList(){
         String banner = null;
         List<Active> actives = null;

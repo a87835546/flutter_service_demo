@@ -1,5 +1,6 @@
 package com.yicen.flutter_service_demo.controller.message;
 
+import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.controller.message.serivce.impl.MessageServiceImpl;
 import com.yicen.flutter_service_demo.entity.Result;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +21,7 @@ public class MessageController {
 
     @GetMapping("unreadCount")
     @ApiOperation("获取未读的消息数量")
+    @NeedLogin
     public Result getUnreadCount(){
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("count",10);
