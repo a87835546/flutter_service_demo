@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yicen.flutter_service_demo.controller.message.mapper.MessageMapper">
+  <resultMap id="BaseResultMap" type="com.yicen.flutter_service_demo.controller.message.entity.Message">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="info_id" jdbcType="INTEGER" property="infoId" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="create_use" jdbcType="VARCHAR" property="createUse" />
+    <result column="is_push" jdbcType="TINYINT" property="isPush" />
+    <result column="is_message" jdbcType="TINYINT" property="isMessage" />
+    <result column="is_read" jdbcType="TINYINT" property="isRead" />
+    <result column="message_type" jdbcType="TINYINT" property="messageType" />
+    <result column="text_content" jdbcType="VARCHAR" property="textContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, info_id, is_delete, create_use, is_push, is_message, is_read, message_type, text_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.yicen.flutter_service_demo.controller.message.entity.Message" useGeneratedKeys="true">
+    insert into message (info_id, is_delete, create_use, 
+      is_push, is_message, is_read, 
+      message_type, text_content)
+    values (#{infoId,jdbcType=INTEGER}, #{isDelete,jdbcType=TINYINT}, #{createUse,jdbcType=VARCHAR}, 
+      #{isPush,jdbcType=TINYINT}, #{isMessage,jdbcType=TINYINT}, #{isRead,jdbcType=TINYINT}, 
+      #{messageType,jdbcType=TINYINT}, #{textContent,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.yicen.flutter_service_demo.controller.message.entity.Message" useGeneratedKeys="true">
+    insert into message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="infoId != null">
+        info_id,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+      <if test="createUse != null">
+        create_use,
+      </if>
+      <if test="isPush != null">
+        is_push,
+      </if>
+      <if test="isMessage != null">
+        is_message,
+      </if>
+      <if test="isRead != null">
+        is_read,
+      </if>
+      <if test="messageType != null">
+        message_type,
+      </if>
+      <if test="textContent != null">
+        text_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="infoId != null">
+        #{infoId,jdbcType=INTEGER},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=TINYINT},
+      </if>
+      <if test="createUse != null">
+        #{createUse,jdbcType=VARCHAR},
+      </if>
+      <if test="isPush != null">
+        #{isPush,jdbcType=TINYINT},
+      </if>
+      <if test="isMessage != null">
+        #{isMessage,jdbcType=TINYINT},
+      </if>
+      <if test="isRead != null">
+        #{isRead,jdbcType=TINYINT},
+      </if>
+      <if test="messageType != null">
+        #{messageType,jdbcType=TINYINT},
+      </if>
+      <if test="textContent != null">
+        #{textContent,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yicen.flutter_service_demo.controller.message.entity.Message">
+    update message
+    <set>
+      <if test="infoId != null">
+        info_id = #{infoId,jdbcType=INTEGER},
+      </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=TINYINT},
+      </if>
+      <if test="createUse != null">
+        create_use = #{createUse,jdbcType=VARCHAR},
+      </if>
+      <if test="isPush != null">
+        is_push = #{isPush,jdbcType=TINYINT},
+      </if>
+      <if test="isMessage != null">
+        is_message = #{isMessage,jdbcType=TINYINT},
+      </if>
+      <if test="isRead != null">
+        is_read = #{isRead,jdbcType=TINYINT},
+      </if>
+      <if test="messageType != null">
+        message_type = #{messageType,jdbcType=TINYINT},
+      </if>
+      <if test="textContent != null">
+        text_content = #{textContent,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yicen.flutter_service_demo.controller.message.entity.Message">
+    update message
+    set info_id = #{infoId,jdbcType=INTEGER},
+      is_delete = #{isDelete,jdbcType=TINYINT},
+      create_use = #{createUse,jdbcType=VARCHAR},
+      is_push = #{isPush,jdbcType=TINYINT},
+      is_message = #{isMessage,jdbcType=TINYINT},
+      is_read = #{isRead,jdbcType=TINYINT},
+      message_type = #{messageType,jdbcType=TINYINT},
+      text_content = #{textContent,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
