@@ -28,7 +28,6 @@ public class HeaderInterceptor implements HandlerInterceptor {
                 if (StringUtil.isNullOrEmpty(token)) {
                     throw new DemoException("无token，请登录");
                 } else {
-
                     boolean result = JwtUtil.verity(token);
                     if (result) {
                         return true;

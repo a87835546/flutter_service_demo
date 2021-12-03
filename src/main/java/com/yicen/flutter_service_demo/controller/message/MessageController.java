@@ -5,19 +5,27 @@ import com.yicen.flutter_service_demo.controller.message.entity.InsertMessageVo;
 import com.yicen.flutter_service_demo.controller.message.entity.Message;
 import com.yicen.flutter_service_demo.controller.message.serivce.impl.MessageServiceImpl;
 import com.yicen.flutter_service_demo.entity.Result;
+import com.yicen.flutter_service_demo.entity.User;
+import com.yicen.flutter_service_demo.utils.JwtUtil;
 import com.yicen.flutter_service_demo.utils.RedisUtil;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @RequestMapping("message")
 @ApiOperation("消息相关的接口")
+@Slf4j
 public class MessageController {
 
     private static final String kRedisPrefix = "message:";
@@ -41,17 +49,40 @@ public class MessageController {
     @GetMapping("read")
     @NeedLogin
     @ApiOperation("读取某条信息")
-    public Result readMessage(@RequestParam Integer messageId, @RequestParam Integer userId) {
-        String key = redisUtil.get(kRedisPrefix+messageId + "");
-        redisUtil.set(kRedisPrefix+messageId + "", userId + (StringUtil.isNullOrEmpty(key) ? key : ""));
+    public Result readMessage(HttpServletRequest request,@RequestParam Integer messageId) {
+        String key = redisUtil.get(kRedisPrefix + messageId + "");
+        User user = JwtUtil.getUser(request.getHeader("token"));
+        redisUtil.set(kRedisPrefix + messageId + "", user.getId() + (StringUtil.isNullOrEmpty(key) ? key : ""));
         return Result.ok();
     }
 
     @GetMapping("info")
     @NeedLogin
     @ApiOperation("获取消息列表")
-    public Result getInfo() {
-        return Result.ok(messageService.getMessages());
+    public Result getInfo(HttpServletRequest request,@ApiParam("消息类型") @RequestParam Integer messageType) {
+        /**
+         * 0 -- 活动
+         * 1 -- 通知
+         * 2 -- 公告
+         */
+        List<Message> messages = messageService.queryByType(messageType);
+
+        if (messageType == 0) {
+            Map<String ,Object> map = new HashMap<>();
+
+            AtomicInteger count = new AtomicInteger();
+            User user = JwtUtil.getUser(request.getHeader("token"));
+            messages.forEach(e -> {
+                String s = redisUtil.get(kRedisPrefix + e.getId());
+                if (s.contains(user.getId().toString())) {
+                    e.setIsRead(true);
+                } else {
+                    e.setIsRead(false);
+                   count.getAndIncrement();
+                }
+            });
+        }
+        return Result.ok(messages);
     }
 
 
@@ -71,7 +102,7 @@ public class MessageController {
         List<Message> messages = messageService.getMessages();
         messages.forEach(e -> {
             if (e.getMessageType() == 0) {
-                String s = redisUtil.get(kRedisPrefix +e.getId() + "");
+                String s = redisUtil.get(kRedisPrefix + e.getId() + "");
                 if (StringUtil.isNullOrEmpty(s)) {
                     redisUtil.set(kRedisPrefix + e.getId() + "", "");
                 }
@@ -89,6 +120,5 @@ public class MessageController {
             }
         }
     }
-
 
 }

@@ -29,4 +29,9 @@ public class MessageServiceImpl implements MessageService {
     public Message queryById(int id) {
         return mapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public List<Message> queryByType(int id) {
+        return mapper.queryAllByType(id);
+    }
 }

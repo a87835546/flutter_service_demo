@@ -22,4 +22,7 @@ public interface MessageMapper {
 
     @Select("select * from message")
     List<Message> queryAll();
+
+    @Select("select * from message where message_type = #{type}")
+    List<Message> queryAllByType(Integer type);
 }

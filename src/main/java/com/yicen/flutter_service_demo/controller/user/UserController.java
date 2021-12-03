@@ -35,6 +35,8 @@ import java.util.Map;
 @Slf4j
 public class UserController {
 
+   static final private String kUserRedisPrefix = "userinfo:";
+
     @Resource
     private UserServiceImpl userService;
 
@@ -87,17 +89,19 @@ public class UserController {
 
     @PostMapping("register")
     @ApiOperation("注册用户，使用用户名密码")
-    public Result<Map> createNewUser(@NotNull @RequestBody UserDo userDo) throws JsonProcessingException {
+    public Result<Map> createNewUser(@NotNull @RequestBody UserDo userDo){
         log.info(userDo.toString());
         User user = userService.queryByUsername(userDo.getUsername());
         if (user == null){
             user = new User();
             BeanUtils.copyProperties(userDo,user);
             User add = userService.add(user);
-            String token = JwtUtil.getToken(add.getUsername());
+            String token = JwtUtil.getToken(add);
             JSONObject jsonObject = JSONObject.fromObject(add);
             jsonObject.put("token",token);
             redisUtil.set(add.getUsername(),token);
+            JSONObject jsonObject1 = JSONObject.fromObject(add);
+            redisUtil.set(kUserRedisPrefix+add.getUsername(), String.valueOf(jsonObject1));
             return Result.ok(jsonObject);
         }else{
             return Result.error("此用户已经注册过");
@@ -128,8 +132,11 @@ public class UserController {
             {
                 return Result.error(201,"用户名或者密码错误");
             }else {
-                String token = JwtUtil.getToken(user.getUsername());
+                String token = JwtUtil.getToken(user);
                 redisUtil.set(user.getUsername(),token);
+                JSONObject jsonObject1 = JSONObject.fromObject(user);
+                redisUtil.set(kUserRedisPrefix+user.getUsername(), String.valueOf(jsonObject1));
+
                 JSONObject jsonObject = JSONObject.fromObject(user);
                 jsonObject.put("token",token);
                 return Result.ok(jsonObject);
@@ -165,5 +172,19 @@ public class UserController {
     Result<TbUser> registerUser(@RequestBody TbRegisterUserVo vo){
         TbUser user = userService.registerUser(vo);
         return Result.ok(user);
+    }
+
+
+    public Integer getUserIdByUsername(String username){
+        String s = redisUtil.get(kUserRedisPrefix + username);
+        User user = (User)JSONObject.toBean(JSONObject.fromObject(s), User.class);
+
+        return user.getId();
+    }
+
+    public User getUserByUsername(String username){
+        String s = redisUtil.get(kUserRedisPrefix + username);
+        User user = (User)JSONObject.toBean(JSONObject.fromObject(s), User.class);
+        return user;
     }
 }

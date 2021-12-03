@@ -11,4 +11,7 @@ public interface MessageService {
     public  int insert(Message message);
 
     public  Message queryById(int id);
+
+
+    public  List<Message> queryByType(int id);
 }
