@@ -50,5 +50,27 @@ public class User implements Serializable {
 
     private String birthday;
 
+    private String avatar;
 
+    private String realName;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", id=" + id +
+                ", createTime='" + createTime + '\'' +
+                ", updateTime='" + updateTime + '\'' +
+                ", email='" + email + '\'' +
+                ", gender=" + gender +
+                ", address='" + address + '\'' +
+                ", balance='" + balance + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", realName='" + realName + '\'' +
+                '}';
+    }
 }

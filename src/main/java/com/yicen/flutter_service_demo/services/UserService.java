@@ -14,4 +14,12 @@ public interface UserService {
     public User queryByUsername(String username);
     public User queryById(Integer id);
     public User queryByPhone(String mobile);
+    public User modifyAvatar(String username,String url);
+    public User modifyUsername(String username,String nickname);
+    public User modifyGender(String username,Boolean gender);
+    public User modifyRealName(String username,String realName);
+    public User modifyBirthday(String username,String birthday);
+    public User modifyPhone(String username,String phone);
+    public User modifyEmail(String username,String email);
+    public User modifyPwd(String username,String pwd);
 }
