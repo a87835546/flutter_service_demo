@@ -22,3 +22,8 @@
     registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
     registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
     registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+
+#fastdfs 使用记录 [fastdfs-client-java 介绍](https://www.cnblogs.com/binghe001/p/13751723.html)
+    1.在docker里面安装fastdfs的镜像，并且配置相对应的端口。
+    2.在客服端使用fastdfs-client-java 这个库
+    

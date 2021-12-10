@@ -27,6 +27,7 @@ logging:
   logback:
 
 
+
 flutter:
   jwt:
     secret: abc123456

@@ -117,7 +117,11 @@
             <artifactId>java-jwt</artifactId>
             <version>3.18.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.fastdfs</groupId>
+            <artifactId>fastdfs-client-java</artifactId>
+            <version>1.29</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

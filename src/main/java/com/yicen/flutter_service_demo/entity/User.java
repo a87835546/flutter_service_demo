@@ -5,17 +5,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
-
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 @Resource

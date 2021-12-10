@@ -1,32 +1,31 @@
 package com.yicen.flutter_service_demo.controller.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.controller.user.entity.LoginByMobilePo;
 import com.yicen.flutter_service_demo.controller.user.entity.ModifyAvatarPo;
-import com.yicen.flutter_service_demo.controller.user.entity.ModifyNickNamePo;
-import com.yicen.flutter_service_demo.entity.Result;
-import com.yicen.flutter_service_demo.entity.TbUser;
-import com.yicen.flutter_service_demo.entity.User;
-import com.yicen.flutter_service_demo.entity.UserDo;
+import com.yicen.flutter_service_demo.entity.*;
 import com.yicen.flutter_service_demo.entity.vo.TbRegisterUserVo;
 import com.yicen.flutter_service_demo.services.impl.UserServiceImpl;
+import com.yicen.flutter_service_demo.utils.FastDfsCommon;
 import com.yicen.flutter_service_demo.utils.JwtUtil;
 import com.yicen.flutter_service_demo.utils.RedisUtil;
-import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.awt.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +43,9 @@ public class UserController {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private FastDfsCommon fastDfsCommon;
 
     @GetMapping("test")
     Result<User> test() {
@@ -248,5 +250,40 @@ public class UserController {
         String s = redisUtil.get(kUserRedisPrefix + username);
         User user = (User)JSONObject.toBean(JSONObject.fromObject(s), User.class);
         return user;
+    }
+
+
+
+    @RequestMapping(value={"/upload"}, method=RequestMethod.POST)
+    @ResponseBody
+    public Result upload(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws IOException{
+        String extName = "";
+        String fileName = "";
+        String originalFilename = file.getOriginalFilename();
+        log.info("original name {}",originalFilename);
+        if(originalFilename.contains(".")) {
+            //拆分文件路径
+            String[] fileArray = originalFilename.split("\\.");
+            //获取文件扩展名
+
+            extName = fileArray[fileArray.length-1];
+            //获取文件名
+            fileName = fileArray[0];
+            log.info("file array ----->>>>> {} ext name --->>> {}",fileArray,extName);
+        }else {
+            fileName = originalFilename;
+        }
+        byte[] bytes = null;
+        try {
+            bytes = file.getBytes(); //将文件转换成字节流形式
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //调用上传文件的具体方法
+        String fileId= FastDfsCommon.upload(bytes,extName);
+        ResourceBean resourceBean = new ResourceBean(fileId, fileName);
+        log.info("file id :" + fileId + "file name {}",fileName);
+        log.info("ext name {}",extName);
+        return Result.ok(resourceBean);
     }
 }
