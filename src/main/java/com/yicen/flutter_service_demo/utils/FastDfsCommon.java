@@ -5,7 +5,9 @@ import org.csource.common.NameValuePair;
 import org.csource.fastdfs.*;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Component
 @Slf4j
@@ -56,6 +58,40 @@ public class FastDfsCommon {
             try {
                 storageClient1.close();
             } catch (IOException e) {
+                e.printStackTrace();
+            }
+            storageClient1 = null;
+        }
+    }
+
+    /**
+     * <B>方法名称：</B>下载方法<BR>
+     * <B>概要说明：</B>通过文件id进行下载<BR>
+     * @param fileId 文件id
+     * @return 返回InputStream
+     */
+    public static InputStream download(String groupName, String fileId) {
+        TrackerServer trackerServer = null;
+        StorageServer storageServer = null;
+        StorageClient1 storageClient1 = null;
+        try {
+            trackerServer = trackerClient.getTrackerServer();
+            if (trackerServer == null) {
+                log.error("getConnection return null");
+            }
+            storageServer = trackerClient.getStoreStorage(trackerServer, groupName);
+            storageClient1 = new StorageClient1(trackerServer, storageServer);
+            byte[] bytes = storageClient1.download_file1(fileId);
+            InputStream inputStream = new ByteArrayInputStream(bytes);
+            return inputStream;
+        } catch (Exception ex) {
+            log.error("下载文件异常：{}", ex);
+            return null;
+        } finally {
+            try {
+                storageClient1.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             storageClient1 = null;
