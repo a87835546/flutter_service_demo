@@ -1,12 +1,11 @@
 package com.yicen.flutter_service_demo.controller.resouce;
 
+import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.entity.ResourceBean;
 import com.yicen.flutter_service_demo.entity.Result;
-import com.yicen.flutter_service_demo.services.UserService;
 import com.yicen.flutter_service_demo.utils.FastDfsCommon;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +21,7 @@ public class ResourceController {
 
     @RequestMapping(value={"/images"}, method= RequestMethod.POST)
     @ResponseBody
+    @NeedLogin
     public Result upload(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String extName = "";
         String fileName = "";

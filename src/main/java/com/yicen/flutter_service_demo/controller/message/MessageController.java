@@ -49,7 +49,7 @@ public class MessageController {
     @GetMapping("read")
     @NeedLogin
     @ApiOperation("读取某条信息")
-    public Result readMessage(HttpServletRequest request,@RequestParam Integer messageId) {
+    public Result readMessage(HttpServletRequest request, @RequestParam Integer messageId) {
         String key = redisUtil.get(kRedisPrefix + messageId + "");
         User user = JwtUtil.getUser(request.getHeader("token"));
         redisUtil.set(kRedisPrefix + messageId + "", user.getId() + (StringUtil.isNullOrEmpty(key) ? key : ""));
@@ -59,7 +59,7 @@ public class MessageController {
     @GetMapping("info")
     @NeedLogin
     @ApiOperation("获取消息列表")
-    public Result getInfo(HttpServletRequest request,@ApiParam("消息类型") @RequestParam Integer messageType) {
+    public Result getInfo(HttpServletRequest request, @ApiParam("消息类型") @RequestParam Integer messageType) {
         /**
          * 0 -- 活动
          * 1 -- 通知
@@ -68,7 +68,7 @@ public class MessageController {
         List<Message> messages = messageService.queryByType(messageType);
 
         if (messageType == 0) {
-            Map<String ,Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
 
             AtomicInteger count = new AtomicInteger();
             User user = JwtUtil.getUser(request.getHeader("token"));
@@ -78,13 +78,37 @@ public class MessageController {
                     e.setIsRead(true);
                 } else {
                     e.setIsRead(false);
-                   count.getAndIncrement();
+                    count.getAndIncrement();
                 }
             });
         }
         return Result.ok(messages);
     }
 
+
+    @GetMapping("getUnreadCount")
+    @NeedLogin
+    @ApiOperation("获取消息列表")
+    public Result getInfoCount(HttpServletRequest request) {
+        /**
+         * 0 -- 活动
+         * 1 -- 通知
+         * 2 -- 公告
+         */
+        List<Message> messages = messageService.queryByType(0);
+        AtomicInteger count = new AtomicInteger();
+        User user = JwtUtil.getUser(request.getHeader("token"));
+        messages.forEach(e -> {
+            String s = redisUtil.get(kRedisPrefix + e.getId());
+            if (s.contains(user.getId().toString())) {
+                e.setIsRead(true);
+            } else {
+                e.setIsRead(false);
+                count.getAndIncrement();
+            }
+        });
+        return Result.ok(count);
+    }
 
     @NeedLogin
     @ApiOperation("添加消息、活动。通知")
