@@ -27,7 +27,7 @@ public class FastDfsCommon {
             trackerClient = new TrackerClient(trackerGroup);
             log.info("初始化分布式文件系统服务完成...");
         } catch (Exception e) {
-            log.error("加载文件异常：{}",e );
+            log.error("加载文件异常：{}",e.getLocalizedMessage() );
         }
     }
 

@@ -33,7 +33,7 @@ public class ResourceBean implements Serializable {
         this.fileName = fileName;
     }
 
-    private static final String BASE_RESOURCES_URL = "http://192.168.55.131:8881/";
+    private static final String BASE_RESOURCES_URL = "http://192.168.1.18:8881/";
     public static String getResourcesUrl(String fileId) {
         return BASE_RESOURCES_URL.concat(fileId);
     }
