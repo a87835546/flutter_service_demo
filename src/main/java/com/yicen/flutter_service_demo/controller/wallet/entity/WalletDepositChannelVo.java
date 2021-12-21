@@ -1,23 +1,16 @@
 package com.yicen.flutter_service_demo.controller.wallet.entity;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
-import javax.annotation.Resource;
-
-/**
- * wallet_deposit_type
- * @author 
- */
 @Data
-@TableName(value = "wallet_deposit_type")
-@ApiModel("钱包的充值方式")
-@Resource
-public class WalletDepositType implements Serializable {
+@TableName("wallet_deposit_channel")
+public class WalletDepositChannelVo {
     private Integer id;
+
+    @TableField("此支付方式的类型")
+    private Integer depositTypeId;
 
     private String name;
 
@@ -30,14 +23,12 @@ public class WalletDepositType implements Serializable {
 
     private String showName;
 
+    private String fixedAmount;
+
     private Integer maxAmount;
 
     private Integer minAmount;
 
-    /**
-     * 钱包类型
-     */
-    private Integer amountType;
-
     private static final long serialVersionUID = 1L;
+
 }
