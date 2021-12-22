@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @TableName("payment")
-public class Payment {
+public class PaymentVo {
 
     @TableId
     @ApiModelProperty

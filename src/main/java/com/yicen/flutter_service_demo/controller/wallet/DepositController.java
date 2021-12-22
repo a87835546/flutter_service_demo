@@ -1,25 +1,32 @@
 package com.yicen.flutter_service_demo.controller.wallet;
 
 
+import com.yicen.flutter_service_demo.controller.payment.entity.PaymentVo;
+import com.yicen.flutter_service_demo.controller.payment.service.impl.PaymentServiceImpl;
+import com.yicen.flutter_service_demo.controller.wallet.entity.WalletDepositDo;
 import com.yicen.flutter_service_demo.controller.wallet.entity.WalletDepositTypeVo;
-import com.yicen.flutter_service_demo.controller.wallet.service.Impl.WalletDepositChannelServiceImpl;
+import com.yicen.flutter_service_demo.controller.wallet.entity.WalletTransactionVo;
+import com.yicen.flutter_service_demo.controller.wallet.service.Impl.TransactionServiceImpl;
 import com.yicen.flutter_service_demo.controller.wallet.service.Impl.WalletDepositServiceImpl;
-import com.yicen.flutter_service_demo.controller.wallet.service.WalletDepositChannelService;
 import com.yicen.flutter_service_demo.entity.Result;
+import com.yicen.flutter_service_demo.entity.User;
+import com.yicen.flutter_service_demo.utils.JwtUtil;
 import com.yicen.flutter_service_demo.utils.RedisUtil;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
 @RequestMapping("wallet/deposit/")
 @ApiOperation("存款相关的接口")
+@Slf4j
 public class DepositController {
 
     private static final String kDepositStyle = "WALLET_DEPOSIT_STYLE_KEY";
@@ -29,6 +36,12 @@ public class DepositController {
 
     @Autowired
     private WalletDepositServiceImpl walletDepositService;
+
+    @Autowired
+    private PaymentServiceImpl paymentService;
+
+    @Autowired
+    private TransactionServiceImpl transactionService;
 
     @GetMapping("style")
     public Result depositStyle() {
@@ -46,7 +59,32 @@ public class DepositController {
         return Result.ok(walletDepositService.getDepositStyle());
     }
 
-    public Result test(){
+    public Result test() {
         return Result.ok(walletDepositService.test());
+    }
+
+    @PostMapping("deposit")
+    public Result deposit(HttpServletRequest request, @RequestBody WalletDepositDo depositDo) {
+        log.info("insert record request {}", depositDo);
+        User user = JwtUtil.getUser(request.getHeader("token"));
+        PaymentVo deposit = paymentService.deposit(user.getId().toString(), BigDecimal.valueOf(depositDo.getMoney()));
+        WalletTransactionVo walletTransactionVo = new WalletTransactionVo();
+        walletTransactionVo.setAmount(depositDo.getMoney().longValue());
+        walletTransactionVo.setType(0);
+        walletTransactionVo.setUserName(user.getUsername());
+        String desc = "";
+        switch (depositDo.getTypeId()) {
+            case 0:
+                desc = "微信充值";
+            case 1:
+                desc = "支付宝充卡";
+            default:
+                desc = "银联充卡";
+
+        }
+        walletTransactionVo.setDescription(desc);
+        boolean b = transactionService.insertRecord(walletTransactionVo);
+        log.info("insert record {}", b ? "success" : "fail");
+        return Result.ok(deposit);
     }
 }

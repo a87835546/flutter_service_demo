@@ -1,8 +1,10 @@
 package com.yicen.flutter_service_demo.entity;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
+import java.beans.ConstructorProperties;
 import java.io.Serializable;
 @Data
 public class Result<T>  implements Serializable {
@@ -63,5 +65,28 @@ public class Result<T>  implements Serializable {
         result.setCode(code);
         result.setMessage(msg);
         return result;
+    }
+
+    @Data
+    public static class  PageInfo{
+        @ApiModelProperty("当前页")
+        protected int currentPage;
+        @ApiModelProperty("页大小")
+        protected int pageSize;
+        @ApiModelProperty("总记录数")
+        protected long totalCount;
+        @ApiModelProperty("总页数")
+        protected long totalPage;
+
+        public PageInfo() {
+        }
+
+        @ConstructorProperties({"currentPage", "pageSize", "totalCount", "totalPage"})
+        public PageInfo(int currentPage, int pageSize, long totalCount, long totalPage) {
+            this.currentPage = currentPage;
+            this.pageSize = pageSize;
+            this.totalCount = totalCount;
+            this.totalPage = totalPage;
+        }
     }
 }
