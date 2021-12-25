@@ -8,6 +8,6 @@ import java.util.List;
 public interface TransactionService {
     boolean insertRecord(WalletTransactionVo vo);
     List<WalletTransactionVo> queryListByUserName(String username);
-    IPage<WalletTransactionVo> selectTransactionByUserId(String username,Integer pageSize,Integer current);
+    IPage<WalletTransactionVo> selectTransactionByUserId(boolean isDeposit, String username,Integer pageSize,Integer current);
 
 }

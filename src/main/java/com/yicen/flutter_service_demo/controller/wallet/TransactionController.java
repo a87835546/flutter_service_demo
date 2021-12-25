@@ -1,6 +1,7 @@
 package com.yicen.flutter_service_demo.controller.wallet;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.controller.wallet.entity.WalletTransactionVo;
 import com.yicen.flutter_service_demo.controller.wallet.service.Impl.TransactionServiceImpl;
 import com.yicen.flutter_service_demo.entity.Result;
@@ -20,23 +21,26 @@ public class TransactionController {
     @Autowired
     private TransactionServiceImpl service;
     @GetMapping("deposit")
+    @NeedLogin
     public Result getDeposit(HttpServletRequest request,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) Integer pageNum){
         User user = JwtUtil.getUser(request.getHeader("token"));
-        List<WalletTransactionVo> walletTransactionVos = service.queryListByUserName(user.getUsername());
-        IPage<WalletTransactionVo> page = service.selectTransactionByUserId(user.getUsername(), pageSize, pageNum);
+        IPage<WalletTransactionVo> page = service.selectTransactionByUserId(true,user.getUsername(), pageSize, pageNum);
         return Result.ok(page);
     }
 
     @ApiOperation("插入存款数据")
     @PostMapping("addDeposit")
+    @NeedLogin
     public Result addDeposit(@RequestBody WalletTransactionVo vo){
         boolean b = service.insertRecord(vo);
         return b?Result.ok("插入数据成功"):Result.error("插入数据失败");
     }
 
     @GetMapping("getWithdraw")
-    public Result getWithdraw(){
-        return Result.ok();
+    public Result getWithdraw(HttpServletRequest request,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) Integer pageNum){
+        User user = JwtUtil.getUser(request.getHeader("token"));
+        IPage<WalletTransactionVo> page = service.selectTransactionByUserId(false,user.getUsername(), pageSize, pageNum);
+        return Result.ok(page);
     }
     @GetMapping("getCoupon")
     public Result getCoupon(){

@@ -32,7 +32,7 @@ public class WalletTransactionVo implements Serializable {
     /**
      * 操作状态 -- 0 fail 1 success
      */
-    private Byte resultType;
+    private Boolean resultType;
 
     /**
      *  操作描述，例如 卡  转  卡

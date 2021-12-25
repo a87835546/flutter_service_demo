@@ -1,11 +1,13 @@
 package com.yicen.flutter_service_demo.controller.wallet;
 
 
+import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.controller.payment.entity.PaymentVo;
 import com.yicen.flutter_service_demo.controller.payment.service.impl.PaymentServiceImpl;
 import com.yicen.flutter_service_demo.controller.wallet.entity.WalletDepositDo;
 import com.yicen.flutter_service_demo.controller.wallet.entity.WalletDepositTypeVo;
 import com.yicen.flutter_service_demo.controller.wallet.entity.WalletTransactionVo;
+import com.yicen.flutter_service_demo.controller.wallet.entity.WalletWithdrawVo;
 import com.yicen.flutter_service_demo.controller.wallet.service.Impl.TransactionServiceImpl;
 import com.yicen.flutter_service_demo.controller.wallet.service.Impl.WalletDepositServiceImpl;
 import com.yicen.flutter_service_demo.entity.Result;
@@ -27,7 +29,7 @@ import java.util.List;
 @RequestMapping("wallet/deposit/")
 @ApiOperation("存款相关的接口")
 @Slf4j
-public class DepositController {
+public class WalletPaymentController {
 
     private static final String kDepositStyle = "WALLET_DEPOSIT_STYLE_KEY";
 
@@ -44,6 +46,7 @@ public class DepositController {
     private TransactionServiceImpl transactionService;
 
     @GetMapping("style")
+    @NeedLogin
     public Result depositStyle() {
         List<WalletDepositTypeVo> lists;
         String s = redisUtil.get(kDepositStyle);
@@ -64,6 +67,7 @@ public class DepositController {
     }
 
     @PostMapping("deposit")
+    @NeedLogin
     public Result deposit(HttpServletRequest request, @RequestBody WalletDepositDo depositDo) {
         log.info("insert record request {}", depositDo);
         User user = JwtUtil.getUser(request.getHeader("token"));
@@ -83,8 +87,32 @@ public class DepositController {
 
         }
         walletTransactionVo.setDescription(desc);
+        walletTransactionVo.setResultType(true);
         boolean b = transactionService.insertRecord(walletTransactionVo);
         log.info("insert record {}", b ? "success" : "fail");
         return Result.ok(deposit);
+    }
+
+    @PostMapping("withdraw")
+    public Result withdraw(HttpServletRequest request,@RequestBody WalletWithdrawVo vo){
+        User user = JwtUtil.getUser(request.getHeader("token"));
+        PaymentVo withdraw = paymentService.withdraw(user.getId().toString(), BigDecimal.valueOf(vo.getAmount()));
+        WalletTransactionVo walletTransactionVo = new WalletTransactionVo();
+        walletTransactionVo.setAmount(vo.getAmount().longValue());
+        walletTransactionVo.setType(1);
+        walletTransactionVo.setUserName(user.getUsername());
+        String desc = "取款";
+        walletTransactionVo.setDescription(desc);
+        if (withdraw == null){
+            walletTransactionVo.setResultType(false);
+            boolean b = transactionService.insertRecord(walletTransactionVo);
+            log.info("insert record {}", b ? "success" : "fail");
+            return  Result.error("取款错误，金额不足");
+        }else {
+            walletTransactionVo.setResultType(true);
+            boolean b = transactionService.insertRecord(walletTransactionVo);
+            log.info("insert record {}", b ? "success" : "fail");
+            return  Result.ok("取款成功");
+        }
     }
 }

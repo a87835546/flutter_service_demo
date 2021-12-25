@@ -1,8 +1,6 @@
 package com.yicen.flutter_service_demo.controller.wallet;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.yicen.flutter_service_demo.controller.wallet.entity.WalletDepositChannelVo;
-import com.yicen.flutter_service_demo.controller.wallet.entity.WalletDepositTypeVo;
 import com.yicen.flutter_service_demo.controller.wallet.entity.WalletTransactionVo;
 import com.yicen.flutter_service_demo.controller.wallet.mapper.WalletDepositTypeMapper;
 import com.yicen.flutter_service_demo.controller.wallet.mapper.WalletTransactionMapper;
@@ -16,17 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @RunWith(SpringRunner.class)
 @Slf4j
 @SpringBootTest
-class DepositControllerTest {
+class WalletPaymentControllerTest {
     @Autowired
-    private DepositController depositController;
+    private WalletPaymentController walletPaymentController;
 
     @Autowired
     private  WalletDepositTypeMapper mapper;
@@ -60,6 +53,6 @@ class DepositControllerTest {
     }
     @Test
     void test3() {
-        log.info("request -->>>> {}",transactionService.selectTransactionByUserId("test8891",10,1));
+        log.info("request -->>>> {}",transactionService.selectTransactionByUserId(true,"test8891",10,1));
     }
 }
