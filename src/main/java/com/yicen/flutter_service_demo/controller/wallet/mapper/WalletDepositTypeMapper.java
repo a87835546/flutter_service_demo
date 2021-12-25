@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface WalletDepositTypeMapper extends BaseMapper<WalletDepositTypeVo> {
 
-    @Select("select * from wallet_deposit_type")
+    @Select("select * from wallet_deposit_type where amount_type = 0")
     List<WalletDepositTypeVo> selectAll();
 
     @Select("select * from wallet_deposit_type type left join wallet_deposit_channel channel on type.id = channel.deposit_type_id")
@@ -24,4 +24,6 @@ public interface WalletDepositTypeMapper extends BaseMapper<WalletDepositTypeVo>
     @Select("select * from wallet_deposit_type where id = 1")
     WalletDepositTypeVo test();
 
+    @Select("select *from wallet_deposit_channel where deposit_type_id = 4")
+    List<WalletDepositChannelVo> selectAll3();
 }

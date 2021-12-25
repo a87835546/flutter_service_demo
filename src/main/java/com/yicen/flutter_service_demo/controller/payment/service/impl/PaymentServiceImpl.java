@@ -19,9 +19,9 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentVo paymentVo = paymentMapper.queryByUserId(userId);
         QueryWrapper<PaymentVo> wrapper = new QueryWrapper<>();
         BigDecimal balance = paymentVo.getBalance();
-        balance.subtract(amount);
+        BigDecimal subtract = balance.subtract(amount);
         if (balance.longValue() > 0) {
-            paymentVo.setBalance(balance);
+            paymentVo.setBalance(subtract);
             int update = paymentMapper.update(paymentVo, wrapper);
             return update > 0 ? paymentMapper.selectOne(wrapper) : null;
         }else {

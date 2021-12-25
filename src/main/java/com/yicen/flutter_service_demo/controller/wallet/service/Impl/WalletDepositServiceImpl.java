@@ -44,4 +44,8 @@ public class WalletDepositServiceImpl implements WalletDepositService {
         return walletDepositTypeMapper.test();
     }
 
+    @Override
+    public List<WalletDepositChannelVo> getChannel() {
+        return walletDepositTypeMapper.selectAll3();
+    }
 }

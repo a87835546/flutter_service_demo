@@ -18,13 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 public class HeaderInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
-        log.info("request---->>>content type :" + request.getContentType() +"\n" + "request.url----->>>>:" + request.getRequestURL());
-        log.info("response :" + response);
+//        log.info("request---->>>content type :" + request.getContentType() +"\n" + "request.url----->>>>:" + request.getRequestURL());
+        log.info("request.url----->>>>:" + request.getRequestURL());
+//        log.info("response :" + response);
         if (handler instanceof  HandlerMethod) {
             HandlerMethod method = (HandlerMethod) handler;
             if (method.getMethod().isAnnotationPresent(NeedLogin.class)) {
                 String token = request.getHeader("token");
-                log.info("token ---- >>>>>> " + token);
+//                log.info("token ---- >>>>>> " + token);
                 if (StringUtil.isNullOrEmpty(token)) {
                     throw new DemoException("无token，请登录");
                 } else {

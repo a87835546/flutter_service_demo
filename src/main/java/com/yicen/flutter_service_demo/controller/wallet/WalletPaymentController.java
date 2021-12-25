@@ -16,6 +16,7 @@ import com.yicen.flutter_service_demo.utils.JwtUtil;
 import com.yicen.flutter_service_demo.utils.RedisUtil;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,19 +48,13 @@ public class WalletPaymentController {
 
     @GetMapping("style")
     @NeedLogin
-    public Result depositStyle() {
-        List<WalletDepositTypeVo> lists;
-        String s = redisUtil.get(kDepositStyle);
-        if (StringUtil.isNullOrEmpty(s)) {
-            List<WalletDepositTypeVo> depositStyle = walletDepositService.getDepositStyle();
-            redisUtil.set(kDepositStyle, String.valueOf(JSONArray.fromObject(depositStyle)));
-            lists = depositStyle;
+    public Result depositStyle(@ApiParam("type == 0 rmb 充值 1 虚拟货币") @RequestParam(required = false) Integer type) {
 
-        } else {
-            JSONArray jsonArray = JSONArray.fromObject(redisUtil.get(kDepositStyle));
-            lists = (List<WalletDepositTypeVo>) JSONArray.toCollection(jsonArray, WalletDepositTypeVo.class);
+        if (null == type || type == 0){
+            return Result.ok(walletDepositService.getDepositStyle());
+        }else {
+            return Result.ok(walletDepositService.getChannel());
         }
-        return Result.ok(walletDepositService.getDepositStyle());
     }
 
     public Result test() {
@@ -77,13 +72,18 @@ public class WalletPaymentController {
         walletTransactionVo.setType(0);
         walletTransactionVo.setUserName(user.getUsername());
         String desc = "";
-        switch (depositDo.getTypeId()) {
-            case 0:
-                desc = "微信充值";
+        switch (depositDo.getAmountType()) {
             case 1:
+                desc = "微信充值";
+                break;
+            case 2:
                 desc = "支付宝充卡";
-            default:
+                break;
+            case 3:
                 desc = "银联充卡";
+                break;
+            default:
+                desc = "虚拟货币充值";
 
         }
         walletTransactionVo.setDescription(desc);
@@ -95,6 +95,7 @@ public class WalletPaymentController {
 
     @PostMapping("withdraw")
     public Result withdraw(HttpServletRequest request,@RequestBody WalletWithdrawVo vo){
+        log.info("取款参数:{}",vo);
         User user = JwtUtil.getUser(request.getHeader("token"));
         PaymentVo withdraw = paymentService.withdraw(user.getId().toString(), BigDecimal.valueOf(vo.getAmount()));
         WalletTransactionVo walletTransactionVo = new WalletTransactionVo();

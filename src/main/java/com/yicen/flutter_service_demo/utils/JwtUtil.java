@@ -45,10 +45,10 @@ public class JwtUtil {
             Algorithm algorithm = Algorithm.HMAC256(TOKEN_SALT);
             JWTVerifier verifier  = JWT.require(algorithm).build();
             DecodedJWT jwt = verifier.verify(token);
-            log.info("jwt" + jwt.getToken());
+//            log.info("jwt" + jwt.getToken());
             Claim s = jwt.getClaim("userinfo");
             User user = (User)JSONObject.toBean(JSONObject.fromObject(s.asMap()),User.class);
-            log.info("验证 token是否有效 ----- >>>>>>> " + user);
+//            log.info("验证 token是否有效 ----- >>>>>>> " + user);
             return user!=null;
         }catch (Exception e){
             e.printStackTrace();
@@ -63,7 +63,7 @@ public class JwtUtil {
             DecodedJWT jwt = verifier.verify(token);
             Claim s = jwt.getClaim("userinfo");
             User user = (User)JSONObject.toBean(JSONObject.fromObject(s.asMap()),User.class);
-            log.info("验证 token是否有效 ----- >>>>>>> " + user);
+//            log.info("验证 token是否有效 ----- >>>>>>> " + user);
             return user;
         }catch (Exception e){
             e.printStackTrace();
