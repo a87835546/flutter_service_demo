@@ -19,7 +19,7 @@ public class WalletTransactionVo implements Serializable {
     /**
      * 金额
      */
-    private Long amount;
+    private Float amount;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
@@ -40,7 +40,7 @@ public class WalletTransactionVo implements Serializable {
     private String description;
 
     /**
-     * 交易类型 0 存款 1 取款 
+     * 交易类型 0 存款 1 取款 2/3 优惠
      */
     private Integer type;
 

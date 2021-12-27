@@ -7,6 +7,8 @@ import com.yicen.flutter_service_demo.controller.wallet.service.Impl.WalletBankS
 import com.yicen.flutter_service_demo.entity.Result;
 import com.yicen.flutter_service_demo.entity.User;
 import com.yicen.flutter_service_demo.utils.JwtUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RestController
 @RequestMapping("wallet/bank")
+@Api("银行卡相关的接口")
 public class BankController {
 
     @Autowired
@@ -24,6 +27,7 @@ public class BankController {
 
     @PostMapping("add")
     @NeedLogin
+    @ApiOperation("添加银行卡")
     public Result addBank(HttpServletRequest request,@RequestBody InsertBankVo walletBankVo) {
         WalletBankVo queryByCardNumber = walletBankService.queryByCardNumber(walletBankVo.getNumber());
         if (queryByCardNumber != null){

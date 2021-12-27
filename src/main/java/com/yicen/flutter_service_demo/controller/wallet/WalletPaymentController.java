@@ -4,31 +4,27 @@ package com.yicen.flutter_service_demo.controller.wallet;
 import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.controller.payment.entity.PaymentVo;
 import com.yicen.flutter_service_demo.controller.payment.service.impl.PaymentServiceImpl;
-import com.yicen.flutter_service_demo.controller.wallet.entity.WalletDepositDo;
-import com.yicen.flutter_service_demo.controller.wallet.entity.WalletDepositTypeVo;
-import com.yicen.flutter_service_demo.controller.wallet.entity.WalletTransactionVo;
-import com.yicen.flutter_service_demo.controller.wallet.entity.WalletWithdrawVo;
+import com.yicen.flutter_service_demo.controller.wallet.entity.*;
 import com.yicen.flutter_service_demo.controller.wallet.service.Impl.TransactionServiceImpl;
+import com.yicen.flutter_service_demo.controller.wallet.service.Impl.WalletDepositChannelServiceImpl;
 import com.yicen.flutter_service_demo.controller.wallet.service.Impl.WalletDepositServiceImpl;
 import com.yicen.flutter_service_demo.entity.Result;
 import com.yicen.flutter_service_demo.entity.User;
 import com.yicen.flutter_service_demo.utils.JwtUtil;
 import com.yicen.flutter_service_demo.utils.RedisUtil;
-import io.netty.util.internal.StringUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.List;
 
 @RestController
-@RequestMapping("wallet/deposit/")
-@ApiOperation("存款相关的接口")
+@RequestMapping("wallet/")
+@Api("存款相关的接口")
 @Slf4j
 public class WalletPaymentController {
 
@@ -46,7 +42,11 @@ public class WalletPaymentController {
     @Autowired
     private TransactionServiceImpl transactionService;
 
+    @Autowired
+    private WalletDepositChannelServiceImpl channelService;
+
     @GetMapping("style")
+    @ApiOperation("获取充值的方式")
     @NeedLogin
     public Result depositStyle(@ApiParam("type == 0 rmb 充值 1 虚拟货币") @RequestParam(required = false) Integer type) {
 
@@ -62,13 +62,14 @@ public class WalletPaymentController {
     }
 
     @PostMapping("deposit")
+    @ApiOperation("存款")
     @NeedLogin
     public Result deposit(HttpServletRequest request, @RequestBody WalletDepositDo depositDo) {
         log.info("insert record request {}", depositDo);
-        User user = JwtUtil.getUser(request.getHeader("token"));
+        User user = JwtUtil.getUserByRequestServlet(request);
         PaymentVo deposit = paymentService.deposit(user.getId().toString(), BigDecimal.valueOf(depositDo.getMoney()));
         WalletTransactionVo walletTransactionVo = new WalletTransactionVo();
-        walletTransactionVo.setAmount(depositDo.getMoney().longValue());
+        walletTransactionVo.setAmount(depositDo.getMoney().floatValue());
         walletTransactionVo.setType(0);
         walletTransactionVo.setUserName(user.getUsername());
         String desc = "";
@@ -94,12 +95,13 @@ public class WalletPaymentController {
     }
 
     @PostMapping("withdraw")
+    @NeedLogin
     public Result withdraw(HttpServletRequest request,@RequestBody WalletWithdrawVo vo){
         log.info("取款参数:{}",vo);
         User user = JwtUtil.getUser(request.getHeader("token"));
         PaymentVo withdraw = paymentService.withdraw(user.getId().toString(), BigDecimal.valueOf(vo.getAmount()));
         WalletTransactionVo walletTransactionVo = new WalletTransactionVo();
-        walletTransactionVo.setAmount(vo.getAmount().longValue());
+        walletTransactionVo.setAmount(vo.getAmount().floatValue());
         walletTransactionVo.setType(1);
         walletTransactionVo.setUserName(user.getUsername());
         String desc = "取款";
@@ -115,5 +117,11 @@ public class WalletPaymentController {
             log.info("insert record {}", b ? "success" : "fail");
             return  Result.ok("取款成功");
         }
+    }
+
+    @PostMapping("insertStyle")
+    public Result addDepositStyle(@RequestBody WalletDepositChannelVo vo){
+        int insert = channelService.insert(vo);
+        return insert > 0 ? Result.ok("添加成功") : Result.error("插入充值类型失败");
     }
 }

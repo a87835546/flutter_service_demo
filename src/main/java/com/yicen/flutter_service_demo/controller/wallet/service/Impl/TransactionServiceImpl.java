@@ -44,11 +44,11 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public IPage<WalletTransactionVo> selectTransactionByUserId(boolean isDeposit, String username,Integer pageSize,Integer current) {
+    public IPage<WalletTransactionVo> selectTransactionByUserId(Integer type, String username,Integer pageSize,Integer current) {
         IPage<WalletTransactionVo> page = new Page<>(current,pageSize);
         QueryWrapper<WalletTransactionVo> wrapper = new QueryWrapper<>();
         wrapper.eq("user_name",username);
-        wrapper.eq("type",isDeposit?0:1);
+        wrapper.eq("type",type);
         /// mybatis plus 的排序方式
         wrapper.orderByDesc(Arrays.asList(new String[] {"create_time"}));
         IPage<WalletTransactionVo> walletTransactionVoIPage = transactionMapper.selectPage(page, wrapper);

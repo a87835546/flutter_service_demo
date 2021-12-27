@@ -53,6 +53,6 @@ class WalletPaymentControllerTest {
     }
     @Test
     void test3() {
-        log.info("request -->>>> {}",transactionService.selectTransactionByUserId(true,"test8891",10,1));
+        log.info("request -->>>> {}",transactionService.selectTransactionByUserId(0,"test8891",10,1));
     }
 }

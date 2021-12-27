@@ -12,6 +12,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,6 +65,15 @@ public class JwtUtil {
             Claim s = jwt.getClaim("userinfo");
             User user = (User)JSONObject.toBean(JSONObject.fromObject(s.asMap()),User.class);
 //            log.info("验证 token是否有效 ----- >>>>>>> " + user);
+            return user;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public static User getUserByRequestServlet(HttpServletRequest servletRequest){
+        try{
+            User user = JwtUtil.getUser(servletRequest.getHeader("token"));
             return user;
         }catch (Exception e){
             e.printStackTrace();
