@@ -3,7 +3,10 @@ package com.yicen.flutter_service_demo.controller.wallet;
 import com.yicen.flutter_service_demo.config.NeedLogin;
 import com.yicen.flutter_service_demo.controller.wallet.entity.InsertBankVo;
 import com.yicen.flutter_service_demo.controller.wallet.entity.WalletBankVo;
+import com.yicen.flutter_service_demo.controller.wallet.entity.WalletCrVo;
+import com.yicen.flutter_service_demo.controller.wallet.mapper.WalletCrMapper;
 import com.yicen.flutter_service_demo.controller.wallet.service.Impl.WalletBankServiceImpl;
+import com.yicen.flutter_service_demo.controller.wallet.service.Impl.WalletCrServiceImpl;
 import com.yicen.flutter_service_demo.entity.Result;
 import com.yicen.flutter_service_demo.entity.User;
 import com.yicen.flutter_service_demo.utils.JwtUtil;
@@ -24,6 +27,9 @@ public class BankController {
 
     @Autowired
     private WalletBankServiceImpl walletBankService;
+
+    @Autowired
+    private WalletCrServiceImpl walletCrService;
 
     @PostMapping("add")
     @NeedLogin
@@ -62,4 +68,32 @@ public class BankController {
         return i > 0 ? Result.ok("删除银行卡成功") : Result.error("删除银行卡失败");
     }
 
+
+    @PostMapping("addCryptocurrency")
+    @NeedLogin
+    @ApiOperation("添加加密的钱包")
+    public Result addWalletAddress(HttpServletRequest request,@RequestBody WalletCrVo walletCrVo) {
+        WalletCrVo queryByCardNumber = walletCrService.queryByCrAddress(walletCrVo.getAddress());
+        if (queryByCardNumber != null){
+            if (queryByCardNumber.getIsDelete() == true){
+                int i = walletCrService.updateDelete(walletCrVo.getAddress());
+                return i > 0 ? Result.ok("添加钱包成功") : Result.error("添加钱包失败");
+            }else {
+                return Result.error("添加钱包失败,此钱包已经添加过了");
+            }
+        }else {
+            User user = JwtUtil.getUser(request.getHeader("token"));
+            walletCrVo.setUserId(user.getId().toString());
+            walletCrVo.setName(user.getUsername());
+            int i = walletCrService.insertBank(walletCrVo);
+            return i > 0 ? Result.ok("添加钱包成功") : Result.error("添加钱包失败");
+        }
+    }
+
+    @GetMapping("crList")
+    @NeedLogin
+    public Result crList(HttpServletRequest request) {
+        User user = JwtUtil.getUserByRequestServlet(request);
+        return Result.ok(walletCrService.getCrList(user.getId().toString()));
+    }
 }

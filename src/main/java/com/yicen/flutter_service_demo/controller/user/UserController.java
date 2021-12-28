@@ -158,6 +158,7 @@ public class UserController {
         User user1 = userService.queryById(user.getId());
         JSONObject jsonObject = JSONObject.fromObject(user1);
         jsonObject.put("token",request.getHeader("token"));
+        jsonObject.remove("password");
         return Result.ok(jsonObject);
     }
 
