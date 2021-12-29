@@ -18,7 +18,7 @@ public class User implements Serializable {
     private String username;
 
     @JsonIgnore
-    @TableField(exist = false)
+//    @TableField(exist = false)
     private String password;
 
     @TableId(value = "id", type = IdType.AUTO)

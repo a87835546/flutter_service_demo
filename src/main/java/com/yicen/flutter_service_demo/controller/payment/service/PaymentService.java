@@ -8,4 +8,5 @@ public interface PaymentService {
     public PaymentVo withdraw(String userId, BigDecimal amount);
     public PaymentVo deposit(String userId,BigDecimal amount);
     public PaymentVo queryByUserId(String userId);
+    public Boolean insert(String userId);
 }

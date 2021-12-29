@@ -1,6 +1,7 @@
 package com.yicen.flutter_service_demo.controller.user;
 
 import com.yicen.flutter_service_demo.config.NeedLogin;
+import com.yicen.flutter_service_demo.controller.payment.service.impl.PaymentServiceImpl;
 import com.yicen.flutter_service_demo.controller.user.entity.LoginByMobilePo;
 import com.yicen.flutter_service_demo.controller.user.entity.ModifyAvatarPo;
 import com.yicen.flutter_service_demo.entity.*;
@@ -46,6 +47,9 @@ public class UserController {
 
     @Autowired
     private FastDfsCommon fastDfsCommon;
+
+    @Autowired
+    private PaymentServiceImpl paymentService;
 
     @GetMapping("test")
     Result<User> test() {
@@ -106,6 +110,8 @@ public class UserController {
             redisUtil.set(add.getUsername(),token);
             JSONObject jsonObject1 = JSONObject.fromObject(add);
             redisUtil.set(kUserRedisPrefix+add.getUsername(), String.valueOf(jsonObject1));
+            Boolean insert = paymentService.insert(add.getId().toString());
+            log.info("添加用户的钱包成功---->>>>> {}",insert);
             return Result.ok(jsonObject);
         }else{
             return Result.error("此用户已经注册过");

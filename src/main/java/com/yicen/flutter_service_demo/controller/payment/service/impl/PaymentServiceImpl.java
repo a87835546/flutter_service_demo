@@ -18,6 +18,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentVo withdraw(String userId, BigDecimal amount) {
         PaymentVo paymentVo = paymentMapper.queryByUserId(userId);
         QueryWrapper<PaymentVo> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id",userId);
         BigDecimal balance = paymentVo.getBalance();
         BigDecimal subtract = balance.subtract(amount);
         if (balance.longValue() > 0) {
@@ -43,6 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
             BigDecimal balance = paymentVo.getBalance();
             balance = balance.add(amount);
             paymentVo.setBalance(balance);
+            wrapper.eq("user_id",userId);
             int update = paymentMapper.update(paymentVo, wrapper);
             return update > 0 ? paymentMapper.selectOne(wrapper) : null;
         }
@@ -51,6 +53,15 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentVo queryByUserId(String userId) {
         return paymentMapper.queryByUserId(userId);
+    }
+
+    @Override
+    public Boolean insert(String userId) {
+        PaymentVo vo = new PaymentVo();
+        vo.setBalance(BigDecimal.valueOf(0.00));
+        vo.setUserId(Integer.valueOf(userId));
+        int insert = paymentMapper.insert(vo);
+        return insert == 0 ? true:false;
     }
 
 }
