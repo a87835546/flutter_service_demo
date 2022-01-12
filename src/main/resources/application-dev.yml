@@ -14,9 +14,16 @@ spring:
     database: 0
     host: 192.168.1.18
     port: 6379
+  rabbitmq:
+    host: 192.168.1.18
+    port: 5672
+    virtual-host: /
+    username: test
+    password: test
 
 server:
   port: 9000
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

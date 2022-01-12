@@ -22,4 +22,5 @@ public interface UserService {
     public User modifyPhone(String username,String phone);
     public User modifyEmail(String username,String email);
     public User modifyPwd(String username,String pwd);
+    public String getInviteCode(long id);
 }

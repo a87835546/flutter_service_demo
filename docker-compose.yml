@@ -61,5 +61,40 @@ services:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     depends_on:
       - elasticsearch
+  tracker:
+    image: delron/fastdfs
+    container_name: tracker
+    restart: always
+    networks:
+      - "host"
+    volumes:
+      - /home/adminpc/Desktop/fastDFS/var/fdfs/tracker:/var/fdfs
+    ports:
+      - "22122:22122"
+  stroage:
+    image: delron/fastdfs
+    container_name: stroage
+    restart: always
+    ports:
+      - "8818:8818"
+    expose:
+      - "8818"
+    depends_on:
+      - tracker
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    restart: always
+    hostname: myRabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    expose:
+      - "5672"
 
+    volumes:
+      - ./data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=test
+      - RABBITMQ_DEFAULT_PASS=test
 

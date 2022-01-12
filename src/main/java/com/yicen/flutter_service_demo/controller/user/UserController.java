@@ -1,6 +1,7 @@
 package com.yicen.flutter_service_demo.controller.user;
 
 import com.yicen.flutter_service_demo.config.NeedLogin;
+import com.yicen.flutter_service_demo.config.RabbitMqConfig;
 import com.yicen.flutter_service_demo.controller.payment.service.impl.PaymentServiceImpl;
 import com.yicen.flutter_service_demo.controller.user.entity.LoginByMobilePo;
 import com.yicen.flutter_service_demo.controller.user.entity.ModifyAvatarPo;
@@ -14,10 +15,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.agent.builder.AgentBuilder;
 import net.sf.json.JSONObject;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.core.MessagePropertiesBuilder;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,11 +33,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import java.awt.*;
+
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 @RestController
 @RequestMapping("/user/")
@@ -50,6 +60,10 @@ public class UserController {
 
     @Autowired
     private PaymentServiceImpl paymentService;
+
+    @Autowired
+    private AmqpTemplate rabbitTemplate;
+
 
     @GetMapping("test")
     Result<User> test() {
@@ -97,17 +111,17 @@ public class UserController {
 
     @PostMapping("register")
     @ApiOperation("注册用户，使用用户名密码")
-    public Result<Map> createNewUser(@NotNull @RequestBody UserDo userDo){
+    public Result<Map> createNewUser(@NotNull @RequestBody UserDo userDo) {
         log.info(userDo.toString());
         User user = userService.queryByUsername(userDo.getUsername());
         if (user == null){
             user = new User();
             BeanUtils.copyProperties(userDo,user);
             User add = userService.add(user);
+            log.info("insert user info {}",add);
             String token = JwtUtil.getToken(add);
             JSONObject jsonObject = JSONObject.fromObject(add);
             jsonObject.put("token",token);
-            redisUtil.set(add.getUsername(),token);
             JSONObject jsonObject1 = JSONObject.fromObject(add);
             redisUtil.set(kUserRedisPrefix+add.getUsername(), String.valueOf(jsonObject1));
             Boolean insert = paymentService.insert(add.getId().toString());
@@ -143,7 +157,6 @@ public class UserController {
                 return Result.error(201,"用户名或者密码错误");
             }else {
                 String token = JwtUtil.getToken(user);
-                redisUtil.set(user.getUsername(),token);
                 JSONObject jsonObject1 = JSONObject.fromObject(user);
                 redisUtil.set(kUserRedisPrefix+user.getUsername(), String.valueOf(jsonObject1));
 
@@ -292,5 +305,33 @@ public class UserController {
         log.info("file id :" + fileId + "file name {}",fileName);
         log.info("ext name {}",extName);
         return Result.ok(resourceBean);
+    }
+
+    @GetMapping("test9")
+    @ApiOperation("测试mq --->>>发送消息")
+    public void testSendMq(@RequestParam String msg,@RequestParam String key){
+        /**
+         *  使用指定的routing key发送消息到指定的exchange
+         *  发送消息的时候需要 添加交换机 和路由器的key， 路由器和交换机绑定的使用路由key连接
+         */
+        rabbitTemplate.convertAndSend(RabbitMqConfig.kTopicExchange,RabbitMqConfig.kRoutingKey,msg);
+    }
+
+    @GetMapping("test10")
+    @ApiOperation("测试mq --->>>> 消费mq消息")
+    @RabbitListener(queues = RabbitMqConfig.kQueue)
+    @RabbitHandler
+    public void test10(String msg){
+        log.info("消费者消费了消息---->>>>{}",msg);
+    }
+
+    @GetMapping("getInviteCode")
+    @ApiOperation("查看用户的邀请码")
+    public Result getInviteCode(HttpServletRequest request){
+        User user = JwtUtil.getUserByRequestServlet(request);
+        String inviteCode = userService.getInviteCode(user.getId().longValue());
+        Map map = new HashMap();
+        map.put("invite",inviteCode);
+        return Result.ok(map);
     }
 }

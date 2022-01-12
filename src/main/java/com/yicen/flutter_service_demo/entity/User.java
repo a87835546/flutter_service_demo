@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @Resource
@@ -18,7 +19,6 @@ public class User implements Serializable {
     private String username;
 
     @JsonIgnore
-//    @TableField(exist = false)
     private String password;
 
     @TableId(value = "id", type = IdType.AUTO)
@@ -49,6 +49,11 @@ public class User implements Serializable {
 
     private String realName;
 
+    private Integer point;
+
+    @JsonIgnore
+    private String inviteCode;
+
     @Override
     public String toString() {
         return "User{" +
@@ -66,6 +71,8 @@ public class User implements Serializable {
                 ", birthday='" + birthday + '\'' +
                 ", avatar='" + avatar + '\'' +
                 ", realName='" + realName + '\'' +
+                ", point=" + point +
+                ", inviteCode='" + inviteCode + '\'' +
                 '}';
     }
 }

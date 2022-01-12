@@ -24,6 +24,9 @@ public class UserDo implements Serializable {
     @ApiModelProperty("用户的email")
     private String email;
 
+    @ApiModelProperty("邀请码")
+    private String inviteCode;
+
     @Override
     public String toString() {
         return "UserDo{" +

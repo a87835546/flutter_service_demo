@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yicen.flutter_service_demo.entity.User;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,13 @@ public class JwtUtil {
             Map<String, Object> map = new HashMap<>();
             map.put("type", "jwt");
             map.put("alg", "hmac256");
-            token = JWT.create().withHeader(map).withClaim("userinfo", JSONObject.fromObject(user)).withExpiresAt(date).sign(algorithm);
+            JSONObject jsonObject = JSONObject.fromObject(user);
+            log.info("user entity parser to json object : {} ：{}",jsonObject,jsonObject instanceof Map);
+            token = JWT.create()
+                    .withHeader(map)
+                    .withClaim("userinfo", jsonObject)
+                    .withExpiresAt(date)
+                    .sign(algorithm);
 
         } catch (Exception e) {
             e.printStackTrace();
