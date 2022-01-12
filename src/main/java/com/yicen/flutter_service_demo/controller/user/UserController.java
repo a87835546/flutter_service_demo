@@ -26,6 +26,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Headers;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -317,12 +320,33 @@ public class UserController {
         rabbitTemplate.convertAndSend(RabbitMqConfig.kTopicExchange,RabbitMqConfig.kRoutingKey,msg);
     }
 
+    @GetMapping("test11")
+    @ApiOperation("测试 用户的mq --->>>发送消息")
+    public void test11( HttpServletRequest request,@RequestParam String msg){
+        /**
+         *  使用指定的routing key发送消息到指定的exchange
+         *  发送消息的时候需要 添加交换机 和路由器的key， 路由器和交换机绑定的使用路由key连接
+         */
+        User user = JwtUtil.getUserByRequestServlet(request);
+
+//        rabbitTemplate.convertAndSend(RabbitMqConfig.kTopicExchange,"user.*",msg);
+        rabbitTemplate.convertAndSend(RabbitMqConfig.kTopicExchange,"user.*",user);
+    }
     @GetMapping("test10")
     @ApiOperation("测试mq --->>>> 消费mq消息")
     @RabbitListener(queues = RabbitMqConfig.kQueue)
     @RabbitHandler
     public void test10(String msg){
         log.info("消费者消费了消息---->>>>{}",msg);
+    }
+
+    @GetMapping("test12")
+    @ApiOperation("测试 用户mq --->>>> 消费mq消息")
+    @RabbitListener(queues = "register_queue")
+    @RabbitHandler
+    @MessageMapping("/message")
+    public void test12(@Payload User user, @Headers Map<String,Object> headers, Object msg,Message message){
+        log.info(user.toString());
     }
 
     @GetMapping("getInviteCode")
